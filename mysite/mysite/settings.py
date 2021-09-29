@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_spectacular',
+    'django_celery_beat',
     'accounts',
     'priorities',
 ]
@@ -88,11 +89,11 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         # "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "sibdev",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "NAME": os.environ.setdefault('POSTGRES_DB', 'sibdev'),
+        "USER": os.environ.setdefault('POSTGRES_USER', 'postgres'),
+        "PASSWORD": os.environ.setdefault('POSTGRES_PASSWORD', 'postgres'),
+        "HOST": os.environ.setdefault('POSTGRES_HOST', 'localhost'),
+        "PORT": os.environ.setdefault('POSTGRES_PORT', '5432'),
     },
 }
 
@@ -177,8 +178,9 @@ EMAIL_FILE_PATH = 'temp-mail'
 
 #TODO добавить селери
 # REDIS related settings
-REDIS_HOST = 'localhost'#redis#localhost
-REDIS_PORT = '6379'
+REDIS_HOST = os.environ.setdefault('REDIS_HOST', 'localhost')
+REDIS_PORT = os.environ.setdefault('REDIS_PORT', '6379')
 BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BEAT_SCHEDULER='django_celery_beat.schedulers:DatabaseScheduler'

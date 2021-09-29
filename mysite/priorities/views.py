@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from priorities.models import PrioritiesModel, PrioritiesNameModel
 from priorities.permissions import IsAuthorOrReadOnly
 from priorities.serializers import PrioritiesSerializer, PrioritiesNameSerializer, PrioritiesCompatibilitySerializer
-from priorities.util import method_conformance
+from priorities.utils import method_conformance
 
 
 class PrioritiesViewSet(viewsets.ModelViewSet):
