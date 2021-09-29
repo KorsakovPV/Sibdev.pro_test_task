@@ -132,3 +132,5 @@ dmypy.json
 /mysite/static/
 /fixtures/
 /mysite/temp-mail/
+/static_volume/
+/postgres_data/
