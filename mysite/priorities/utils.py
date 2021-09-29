@@ -29,15 +29,14 @@ def method_conformance(user_account: Account) -> list:
         except ZeroDivisionError:
             ammount_conformance = 0
         if ammount_conformance >= 75:
-            # return_accounts_list.append((return_accounts_list, (ammount_conformance, account.name)))
             return_accounts_list.append({'conformance': ammount_conformance, 'name': account.name})
         if len(return_accounts_list) >= 20:
             break
 
     return_accounts_list.sort(key=operator.itemgetter('conformance'), reverse=True)
 
-    # Перебирать 20000 записей очень дорого. Поэтому я вывожу первые 20 подходящих записей. Это скорее всего не совсем по ТЗ.
-    # Как все жатные алгоритмы он заметно быстрее. И возвращает результат приемлемый но не самый точный.
+    # Перебирать 20000 записей очень дорого. Поэтому я вывожу первые 20 подходящих записей. Это скорее всего не
+    # совсем по ТЗ. Как все жадные алгоритмы он заметно быстрее. И возвращает результат приемлемый но не самый точный.
     return return_accounts_list
 
 
@@ -56,5 +55,5 @@ def method_conformance(user_account: Account) -> list:
     #
     # # Разворачиваем массив что самое релевантное значение было первым.
     # data.reverse()
-
-    return data
+    #
+    # return data
