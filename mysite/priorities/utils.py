@@ -10,8 +10,8 @@ def method_conformance(user_account: Account) -> list:
     for my_priorit in my_priorities:
         my_priorities_dict[my_priorit.get('priorities_name_id')] = my_priorit.get('importance')
 
-    # Получаю все accounts с полем precedents связаным обратной связью с моделями PrioritiesModel
-    all_accounts = Account.objects.exclude(id=user_account.id).prefetch_related('precedents')
+    # Получаю все accounts. В данной реализации prefetch_related утяжеляет запрос.
+    all_accounts = Account.objects.exclude(id=user_account.id)  # .prefetch_related('precedents')
     return_accounts_list = list()
     for account in all_accounts:
         conformance = 0
@@ -21,7 +21,9 @@ def method_conformance(user_account: Account) -> list:
         # Прохожу по приоритетам и вычисляю соответствие
         for account_precedent in account_precedents:
             # Посчитываю соответствие user_account(аутентифицированного) и account_precedent(из списка всех аккаунтов).
-            # Максимальное соответствие 0, несоответствие 20 * на количество предпочтений у user_account
+            # Максимальное соответствие 0, несоответствие 20 * на количество предпочтений у user_account.
+            # Разность можно заменить на разность квадратов или кубов. Это позволит отбраковывать варианты с большими
+            # различиями по одному приоритету. Сейчас такие результаты выравниваются и теряются в сумме.
             conformance += abs(
                 account_precedent.importance - my_priorities_dict[account_precedent.priorities_name_id])
         try:
@@ -37,10 +39,13 @@ def method_conformance(user_account: Account) -> list:
 
     # Перебирать 20000 записей очень дорого. Поэтому я вывожу первые 20 подходящих записей. Это скорее всего не
     # совсем по ТЗ. Как все жадные алгоритмы он заметно быстрее. И возвращает результат приемлемый но не самый точный.
+    # Релевантность результатов можно улучшить набирая не 20, а например 100 значений. А из них уже выдавать самые
+    # подходящие. Это  не должно дать большую нагрузку на алгоритм.
     return return_accounts_list
 
+    # Точное но очень долгое решение. Куча оставляет самые релевантные значения и поддерживает их в отсортированном
+    # виде.
 
-    # Точное но очень долгое решение
     #     if len(return_accounts_list) < 21:
     #         heapq.heappush(return_accounts_list, (ammount_conformance, account.name))
     #     else:
