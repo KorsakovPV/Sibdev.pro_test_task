@@ -1,4 +1,4 @@
-import heapq
+import operator
 
 from accounts.models import Account
 
@@ -28,23 +28,33 @@ def method_conformance(user_account: Account) -> list:
             ammount_conformance = 100 - conformance / (len(my_priorities) * 20) * 100
         except ZeroDivisionError:
             ammount_conformance = 0
-        # Так как выполнить все вычисления на стороне базы не получилось (здесь должен быть грустный смайлик) решил
-        # сэкономить хотя бы на памяти.
-        # Сортировка выполняется кучей. Пока размер кучи меньше 20 значения пушатся. Когда куча больше 20 значения так
-        # же пушатся, а самое не релевантное, с наименьшим процентом совпадений удаляется.
-        if len(return_accounts_list) < 21:
-            heapq.heappush(return_accounts_list, (ammount_conformance, account.name))
-        else:
-            heapq.heapreplace(return_accounts_list, (ammount_conformance, account.name))
-    data = list()
+        if ammount_conformance >= 75:
+            # return_accounts_list.append((return_accounts_list, (ammount_conformance, account.name)))
+            return_accounts_list.append({'conformance': ammount_conformance, 'name': account.name})
+        if len(return_accounts_list) >= 20:
+            break
 
-    # Достаем значения из кучи.
-    while len(return_accounts_list) > 0:
-        conformance, name = heapq.heappop(return_accounts_list)
-        if conformance >= 75:
-            data.append({'conformance': conformance, 'name': name})
+    return_accounts_list.sort(key=operator.itemgetter('conformance'), reverse=True)
 
-    # Разворачиваем массив что самое релевантное значение было первым.
-    data.reverse()
+    # Перебирать 20000 записей очень дорого. Поэтому я вывожу первые 20 подходящих записей. Это скорее всего не совсем по ТЗ.
+    # Как все жатные алгоритмы он заметно быстрее. И возвращает результат приемлемый но не самый точный.
+    return return_accounts_list
+
+
+    # Точное но очень долгое решение
+    #     if len(return_accounts_list) < 21:
+    #         heapq.heappush(return_accounts_list, (ammount_conformance, account.name))
+    #     else:
+    #         heapq.heapreplace(return_accounts_list, (ammount_conformance, account.name))
+    # data = list()
+    #
+    # # Достаем значения из кучи.
+    # while len(return_accounts_list) > 0:
+    #     conformance, name = heapq.heappop(return_accounts_list)
+    #     if conformance >= 75:
+    #         data.append({'conformance': conformance, 'name': name})
+    #
+    # # Разворачиваем массив что самое релевантное значение было первым.
+    # data.reverse()
 
     return data
