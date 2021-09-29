@@ -1,6 +1,6 @@
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 
-from accounts.serializers import AccountSerializer
 from priorities.models import PrioritiesModel, PrioritiesNameModel
 
 
@@ -11,18 +11,13 @@ class PrioritiesNameSerializer(serializers.ModelSerializer):
 
 
 class PrioritiesSerializer(serializers.ModelSerializer):
+    account = serializers.HiddenField(default=CurrentUserDefault())
+
     class Meta:
         model = PrioritiesModel
         fields = '__all__'
 
 
-# class PrioritiesCompatibilitySerializer(serializers.ModelSerializer):
 class PrioritiesCompatibilitySerializer(serializers.Serializer):
     name = serializers.ReadOnlyField(source='account.name')
     conformance = serializers.ReadOnlyField()
-    # priorities_name = PrioritiesNameSerializer(read_only=True)
-
-    # class Meta:
-    #     model = PrioritiesModel
-    #     fields = '__all__'
-    #     fields = ('name', 'conformance')

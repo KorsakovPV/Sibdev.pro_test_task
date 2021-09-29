@@ -3,8 +3,8 @@ from django.dispatch import receiver
 from django.utils import translation
 
 from accounts.models import EmailConfirmation, EmailConfirmationMessage
-# from accounts.utils import send_register_confirmation_email
 from accounts.tasks import send_register_confirmation_email_celery
+
 
 @receiver(post_save, sender=EmailConfirmation, dispatch_uid='send_email_with_code')
 def send_email_with_code(sender, instance, **kwargs):
@@ -12,7 +12,6 @@ def send_email_with_code(sender, instance, **kwargs):
         return
 
     try:
-        # TODO добасить селери
         send_register_confirmation_email_celery.delay(instance.email, instance.confirmation_code)
     except Exception as e:
         success = False

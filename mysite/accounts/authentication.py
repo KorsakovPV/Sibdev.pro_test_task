@@ -1,10 +1,8 @@
 from django.contrib.auth.backends import ModelBackend
-from django.contrib.auth.backends import ModelBackend
-from drf_spectacular.contrib.rest_framework_simplejwt import SimpleJWTScheme
+from django.utils.translation import ugettext_lazy as _
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
 from rest_framework_simplejwt.settings import api_settings
-from django.utils.translation import ugettext_lazy as _
 
 from accounts.models import Account
 
@@ -23,6 +21,7 @@ class AccountAuthBackend(ModelBackend):
 
         except Account.DoesNotExist:
             pass
+
 
 class CustomUserJWTAuthentication(JWTAuthentication):
 

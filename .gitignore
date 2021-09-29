@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 /mysite/priorities/fixtures/
 .idea
+/mysite/static/
+/fixtures/
+/mysite/temp-mail/

@@ -1,14 +1,9 @@
 import heapq
 
-from django.db.models import Count
-
 from accounts.models import Account
 
-from priorities.models import PrioritiesModel
 
-
-def method_conformance(user_account):
-
+def method_conformance(user_account: Account) -> list:
     # Получаю все свои приоритеты и сохраняю их в словарь. Ключь id , значение
     my_priorities = user_account.precedents.all().values('importance', 'priorities_name_id')
     my_priorities_dict = dict()
@@ -48,8 +43,8 @@ def method_conformance(user_account):
         conformance, name = heapq.heappop(return_accounts_list)
         if conformance >= 75:
             data.append({'conformance': conformance, 'name': name})
-    # Разворачиваем массив что самое релевантное значение было первым.
 
+    # Разворачиваем массив что самое релевантное значение было первым.
     data.reverse()
 
     return data

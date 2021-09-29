@@ -11,7 +11,6 @@ def send_register_confirmation_email(receiver_email: str, code: str) -> None:
     :param code:
     :return:
     """
-    # TODO добавить celery
     subject = 'Confirm your account email'
     html_content = render_to_string(
         'account_confirmation.html',

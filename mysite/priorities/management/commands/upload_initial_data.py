@@ -28,7 +28,7 @@ class Command(BaseCommand):
         precedents_dict = {}
         gen = self.gen(f'{settings.BASE_DIR}/priorities/management/commands/participants.jsonl')
         try:
-            bar = pyprind.ProgBar(20, title=f'Generating initial data.')
+            bar = pyprind.ProgBar(20000, title='Generating initial data.')
             while line := next(gen):
                 bar.update()
                 account = AccountFactory.build(confirmed=True, name=line.get('name'))

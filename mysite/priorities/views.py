@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 
 from priorities.models import PrioritiesModel, PrioritiesNameModel
@@ -17,7 +17,7 @@ class PrioritiesViewSet(viewsets.ModelViewSet):
 
     @extend_schema(request=PrioritiesCompatibilitySerializer, responses={200: None})
     @action(detail=False, methods=['get'], name='Compatibility list',
-            permission_classes=[AllowAny])  # AllowAny IsAuthenticated
+            permission_classes=[IsAuthenticated])
     def compatibility_list(self, request):
         user_account = request.user
         data = method_conformance(user_account)
