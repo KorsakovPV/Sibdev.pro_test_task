@@ -14,21 +14,27 @@ class Account(AbstractBaseUser, TimeStampedModel, UUIDModel):
     confirmed = models.BooleanField(verbose_name=_('Confirmed'), default=False)
     name = models.CharField(verbose_name=_('Full name'), max_length=255)
 
+    def __str__(self):
+        return str(self.email)
+
+    class Meta:
+        verbose_name = _('Account')
+        verbose_name_plural = 'Accounts'
 
 class EmailConfirmation(TimeStampedModel):
     CODE_TIMEDELTA = timezone.timedelta(days=1)
 
-    email = models.EmailField('Email', unique=True)
-    confirmation_code = models.UUIDField('Confirmation code', default=uuid.uuid4)
+    email = models.EmailField(_('Email'), unique=True)
+    confirmation_code = models.UUIDField(_('Confirmation code'), default=uuid.uuid4)
     account = models.OneToOneField(
-        Account, verbose_name='Account', on_delete=models.CASCADE, null=True,
+        Account, verbose_name=_('Account'), on_delete=models.CASCADE, null=True,
         default=None, related_name='email_confirmation', blank=True
     )
 
     class Meta:
-        verbose_name = 'Email confirmation'
-        verbose_name_plural = 'Email confirmations'
-        ordering = ('-id',)
+        verbose_name = _('Email confirmation')
+        verbose_name_plural = _('Email confirmations')
+        ordering = ('-created',)
 
     def __str__(self):
         return str(self.email)
@@ -36,17 +42,17 @@ class EmailConfirmation(TimeStampedModel):
 
 class EmailConfirmationMessage(TimeStampedModel):
     email_confirmation = models.ForeignKey(
-        EmailConfirmation, verbose_name='Email confirmation', on_delete=models.CASCADE,
-        related_name='confirmation_messages'
+        EmailConfirmation, verbose_name=_('Email confirmation'), on_delete=models.CASCADE,
+        related_name=_('confirmation_messages')
     )
-    sent_code = models.UUIDField('Sent code')
-    success = models.BooleanField('Success')
+    sent_code = models.UUIDField(_('Sent code'))
+    success = models.BooleanField(_('Success'))
     error = models.TextField('Error', blank=True)
 
     class Meta:
-        verbose_name = 'Email confirmation message'
-        verbose_name_plural = 'Email confirmation messages'
-        ordering = ('-id',)
+        verbose_name = _('Email confirmation message')
+        verbose_name_plural = _('Email confirmation messages')
+        ordering = ('-created',)
 
     def __str__(self):
         return str(self.email_confirmation.email)

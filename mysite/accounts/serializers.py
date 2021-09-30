@@ -1,6 +1,7 @@
 import uuid
 
 import django.contrib.auth.password_validation as validators
+from django.contrib.auth.handlers.modwsgi import check_password
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.utils import timezone
@@ -20,7 +21,7 @@ class EmailConfirmationSerializer(serializers.ModelSerializer):
             if existing_confirmation.account is not None:
                 raise ValidationError({'email': 'Email is already confirmed'})
 
-            if timezone.now() >= existing_confirmation.created + EmailConfirmation.CODE_TIMEDELTA:  # too old code
+            if timezone.now() >= existing_confirmation.created + EmailConfirmation.CODE_TIMEDELTA:  # Протухание кода
                 existing_confirmation.code = uuid.uuid4()
 
             existing_confirmation.save()
@@ -92,7 +93,7 @@ class RegisterAccountSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Create user and add "User" role to him if it exists
+        Create account.
         """
 
         validated_data.pop('confirm_password')
@@ -128,3 +129,30 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = '__all__'
+
+class AccountUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for **USER** own account update only with allowed fields
+    """
+
+    old_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+
+    def update(self, instance, validated_data):
+        new_password = validated_data.pop('new_password', None)
+        old_password = validated_data.pop('old_password', None)
+
+        if new_password and not old_password:
+            raise ValidationError({'old_password': 'Old password is required for update'})
+
+        if new_password and not check_password(old_password, instance.password):
+            raise ValidationError({'old_password': 'Old password is incorrect'})
+
+        if new_password:
+            instance.set_password(new_password)
+
+        return super().update(instance, validated_data)
+
+    class Meta:
+        model = Account
+        fields = ('new_password', 'old_password', 'id')

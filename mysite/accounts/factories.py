@@ -12,6 +12,8 @@ class AccountFactory(DjangoModelFactory):
     id = Faker('uuid4')
     # email = Faker('email')
     # email = LazyAttribute(lambda _: faker.Faker().country_calling_code() + faker.Faker().msisdn())
+    # Так как email используется в качестве username, он должен быть уникальным для любого количества пользователей.
+    # Faker('email') иногда выдает повторяюшиеся результаты. Поэтому я написал свою фабрику.
     email = LazyAttribute(lambda _: faker.Faker().uuid4() + faker.Faker().email())
     password = factory.PostGenerationMethodCall('set_password', DEFAULT_PASSWORD)
     name = Faker('name')

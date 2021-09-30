@@ -5,7 +5,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from accounts.models import Account
-from accounts.serializers import EmailConfirmationSerializer, RegisterAccountSerializer
+from accounts.serializers import EmailConfirmationSerializer, RegisterAccountSerializer, AccountUpdateSerializer, \
+    AccountSerializer
 
 
 class AccountViewSet(viewsets.ModelViewSet):
@@ -16,6 +17,13 @@ class AccountViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset.filter(email=self.request.user.email)
         return queryset
+
+    def get_serializer_class(self):
+        if self.request.user:
+            if self.action in ['update', 'partial_update']:
+                return AccountUpdateSerializer
+
+        return AccountSerializer
 
     @extend_schema(request=EmailConfirmationSerializer, responses={201: None})
     @action(detail=False, methods=['post'], name='Send confirmation email', permission_classes=[AllowAny])

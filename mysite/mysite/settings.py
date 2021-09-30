@@ -164,7 +164,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'MyAgent API',
+    'TITLE': 'Sibdev API',
     'DESCRIPTION': 'API for frontend applications',
     'VERSION': '0.1.0',
     'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAdminUser'],
@@ -176,8 +176,17 @@ SIMPLE_JWT = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = 'temp-mail'
+# EMAIL_FILE_PATH = 'temp-mail'
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'temp-mail')
 
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = os.getenv('EMAIL_HOST')
+# EMAIL_PORT = os.getenv('EMAIL_PORT')
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+# EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
+# SERVER_EMAIL = EMAIL_HOST_USER
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 REDIS_HOST = os.environ.setdefault('REDIS_HOST', 'localhost')
 REDIS_PORT = os.environ.setdefault('REDIS_PORT', '6379')
@@ -195,6 +204,6 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
     "sample_task": {
         "task": "priorities.tasks.send_new_preferences_to_all_users_celery",
-        "schedule": crontab(hour="1"),#crontab(minute="*/1"),
+        "schedule": crontab(hour="*/24"),#crontab(minute="*/1"),
     },
 }

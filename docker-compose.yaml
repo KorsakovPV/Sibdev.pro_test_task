@@ -23,8 +23,6 @@ services:
   celery:
     build: .
     command: celery -A mysite worker -l info
-#    volumes:
-#      - .:/code
     depends_on:
       - db
       - redis
@@ -35,8 +33,6 @@ services:
   celery-beat:
     build: .
     command: celery -A mysite beat -l info
-#    volumes:
-#      - .:/code
     depends_on:
       - db
       - redis
@@ -49,7 +45,7 @@ services:
     restart: always
     volumes:
       - ./static_volume:/code/static/
-#      - ./fixtures:/code/fixtures
+      - ./temp-mail_volume:/code/temp-mail
     depends_on:
       - db
       - redis
