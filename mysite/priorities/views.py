@@ -12,8 +12,10 @@ from priorities.utils import method_conformance
 
 class PrioritiesViewSet(viewsets.ModelViewSet):
     serializer_class = PrioritiesSerializer
-    queryset = PrioritiesModel.objects.all()
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsAuthenticated]#[IsAuthorOrReadOnly]
+
+    def get_queryset(self):
+        return PrioritiesModel.objects.filter(account=self.request.user)
 
     @extend_schema(request=PrioritiesCompatibilitySerializer, responses={200: None})
     @action(detail=False, methods=['get'], name='Compatibility list',
